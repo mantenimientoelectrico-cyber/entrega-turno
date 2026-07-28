@@ -3,361 +3,315 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Dinámico de Entrega de Turno</title>
+    <title>Reporte de Entrega de Turno</title>
     <style>
         :root {
             --primary-color: #0f172a;
             --accent-color: #2563eb;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
+            --text-color: #334155;
             --border-color: #cbd5e1;
         }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-color);
-            color: #334155;
+            color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 16px;
         }
-
         .container {
-            max-width: 900px;
+            max-width: 700px;
             margin: 0 auto;
             background: var(--card-bg);
-            padding: 30px;
+            padding: 24px;
             border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-
-        h1 {
-            color: var(--primary-color);
+        h2 {
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 24px;
         }
-
         fieldset {
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
             background-color: #fff;
         }
-
         legend {
             font-weight: bold;
             color: var(--accent-color);
-            padding: 0 10px;
-            font-size: 1.1rem;
+            padding: 0 8px;
         }
-
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            font-size: 0.9rem;
+            margin-top: 10px;
+            font-weight: 500;
+            font-size: 14px;
         }
-
-        input, select, textarea {
+        input[type="text"], input[type="date"], input[type="time"], select, textarea {
             width: 100%;
             padding: 10px;
+            margin-top: 5px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            font-size: 0.95rem;
             box-sizing: border-box;
-            background-color: #f8fafc;
+            font-size: 14px;
         }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            background-color: #fff;
-        }
-
-        textarea {
-            resize: vertical;
-            height: 80px;
-        }
-
         .equipment-row {
-            display: grid;
-            grid-template-columns: 2fr 1.5fr 3fr;
-            gap: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #e2e8f0;
         }
-
-        .btn-container {
-            text-align: center;
-            margin-top: 30px;
+        .equipment-name {
+            flex: 1 1 180px;
+            font-weight: 600;
         }
-
-        button {
+        .status-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-options label {
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 0;
+            cursor: pointer;
+        }
+        .obs-input {
+            width: 100%;
+            margin-top: 6px;
+        }
+        button.submit-btn {
             background-color: var(--accent-color);
             color: white;
             border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
+            padding: 14px;
+            width: 100%;
+            font-size: 16px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
-            margin: 5px;
         }
-
-        button:hover {
+        button.submit-btn:hover {
             background-color: #1d4ed8;
         }
-
-        button.secondary {
-            background-color: #64748b;
-        }
-        button.secondary:hover {
-            background-color: #475569;
-        }
-
-        #resultado-preview {
-            background: #0f172a;
-            color: #38bdf8;
-            padding: 20px;
-            border-radius: 8px;
-            white-space: pre-wrap;
+        textarea#resultado {
             font-family: monospace;
-            font-size: 0.9rem;
-            margin-top: 20px;
-            display: none;
+            background: #f1f5f9;
+            height: 250px;
         }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .action-buttons button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-copy { background-color: #10b981; color: white; }
+        .btn-email { background-color: #8b5cf6; color: white; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🚀 Sistema Automatizado de Entrega de Turno</h1>
-    
+    <h2>Sistema de Entrega de Turno</h2>
     <form id="turnoForm">
-        <!-- DATOS GENERALES -->
+        
+        <!-- Datos Generales -->
         <fieldset>
-            <legend>1. Información General</legend>
-            <div class="grid-2">
-                <div>
-                    <label>Entrega:</label>
-                    <input type="text" id="quienEntrega" placeholder="Tu Nombre">
-                </div>
-                <div>
-                    <label>Cargo (Quien entrega):</label>
-                    <select id="cargoEntrega">
-                        <option value="Tecnólogo de Automatización">Tecnólogo de Automatización</option>
-                        <option value="Ingeniero de Automatización">Ingeniero de Automatización</option>
-                        <option value="Operador Especializado">Operador Especializado</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Recibe:</label>
-                    <input type="text" id="quienRecibe" placeholder="Nombre de quien recibe">
-                </div>
-                <div>
-                    <label>Cargo (Quien recibe):</label>
-                    <select id="cargoRecibe">
-                        <option value="Tecnólogo de Automatización">Tecnólogo de Automatización</option>
-                        <option value="Ingeniero de Automatización">Ingeniero de Automatización</option>
-                        <option value="Operador Especializado">Operador Especializado</option>
-                    </select>
-                </div>
-                <div>
+            <legend>Información General</legend>
+            <label>Nombre del Emisor:</label>
+            <input type="text" id="nombreEmisor" required placeholder="Ej. Juan Pérez">
+            
+            <label>Cargo del Emisor:</label>
+            <input type="text" id="cargoEmisor" required placeholder="Ej. Operador de Patio">
+            
+            <label>Nombre del Receptor:</label>
+            <input type="text" id="nombreReceptor" required placeholder="Ej. Carlos Gómez">
+            
+            <label>Cargo del Receptor:</label>
+            <input type="text" id="cargoReceptor" required placeholder="Ej. Operador Entrante">
+            
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
                     <label>Turno:</label>
-                    <select id="turnoHorario">
-                        <option value="06:00 – 14:00">06:00 – 14:00 (Mañana)</option>
-                        <option value="14:00 – 22:00">14:00 – 22:00 (Tarde)</option>
-                        <option value="22:00 – 06:00">22:00 – 06:00 (Noche)</option>
-                    </select>
+                    <input type="text" id="turnoHorario" required placeholder="Ej. 06:00 – 14:00">
                 </div>
-                <div>
+                <div style="flex: 1;">
                     <label>Fecha:</label>
-                    <input type="date" id="fechaTurno">
+                    <input type="date" id="fechaTurno" required>
                 </div>
             </div>
         </fieldset>
 
-        <!-- ESTADO DE EQUIPOS -->
+        <!-- Estado de Equipos -->
         <fieldset>
-            <legend>2. Estado de los Equipos</legend>
-            <div id="equiposContainer">
-                <!-- Se generan dinámicamente o por bloques claros -->
-            </div>
-        </fieldset>
-
-        <!-- OPERACIÓN Y ACTIVIDADES -->
-        <fieldset>
-            <legend>3. Operación y Novedades</legend>
-            <label>Descripción de la Operación Actual:</label>
-            <textarea id="operacionActual" placeholder="Describa la operación al momento de la entrega..."></textarea>
+            <legend>Estado de los Equipos</legend>
             
-            <label style="margin-top: 15px;">Actividades relevantes, trabajos pendientes y fallas:</label>
-            <textarea id="actividadesRelevantes" placeholder="1. Se revisó... 2. Pendiente..."></textarea>
-            
-            <div class="grid-2" style="margin-top: 15px;">
-                <div>
-                    <label>Áreas intervenidas ordenadas y aseadas:</label>
-                    <select id="aseoAreas">
-                        <option value="SI">SI</option>
-                        <option value="NO">NO</option>
-                    </select>
-                </div>
+            <!-- Generador dinámico simplificado de equipos -->
+            <div id="listaEquipos">
+                <!-- Se inyectan mediante JS para ahorrar código -->
             </div>
         </fieldset>
 
-        <!-- DOTACIÓN -->
+        <!-- Operación y Actividades -->
         <fieldset>
-            <legend>4. Equipos Entregados (Dotación)</legend>
-            <div class="grid-2">
-                <div>
-                    <label>Celular Estado:</label>
-                    <select class="dotacion">
-                        <option value="DO">Disponible y Operativo (DO)</option>
-                        <option value="DNO">Disponible y No Operativo (DNO)</option>
-                        <option value="ND">No Disponible (ND)</option>
-                        <option value="BUENO">Bueno</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Radio Estado:</label>
-                    <select class="dotacion">
-                        <option value="DO">Disponible y Operativo (DO)</option>
-                        <option value="DNO">Disponible y No Operativo (DNO)</option>
-                        <option value="ND">No Disponible (ND)</option>
-                        <option value="BUENO">Bueno</option>
-                    </select>
-                </div>
-            </div>
+            <legend>Operación y Novedades</legend>
+            
+            <label>9. Operación actual:</label>
+            <textarea id="operacionActual" rows="2" placeholder="Descripción breve de la operación actual..."></textarea>
+            
+            <label>10. Actividades relevantes / Novedades / Permisos:</label>
+            <textarea id="actividadesRelevantes" rows="3" placeholder="1. Ej: Revisión de sensores... 2. ..."></textarea>
+            
+            <label>11. Áreas intervenidas ordenadas y aseadas:</label>
+            <select id="areasAseadas">
+                <option value="SI">SI</option>
+                <option value="NO">NO</option>
+            </select>
         </fieldset>
 
-        <div class="btn-container">
-            <button type="button" onclick="generarReporte()">✨ Generar Reporte de Turno</button>
-            <button type="button" class="secondary" onclick="copiarReporte()" id="btnCopiar" style="display:none;">📋 Copiar al Portapapeles</button>
-            <button type="button" class="secondary" onclick="descargarTxt()" id="btnDescargar" style="display:none;">💾 Descargar Archivo .txt</button>
-        </div>
+        <!-- Equipos Entregados -->
+        <fieldset>
+            <legend>Dotación y Equipos Entregados</legend>
+            <label>Celular (Estado):</label>
+            <input type="text" id="celularEstado" value="Operativo / Buen estado">
+            
+            <label>Radio (Estado):</label>
+            <input type="text" id="radioEstado" value="Operativo / Buen estado">
+        </fieldset>
+
+        <button type="button" class="submit-btn" onclick="generarReporte()">Generar Reporte Formal</button>
     </form>
 
-    <div id="resultado-preview"></div>
+    <!-- Resultado -->
+    <fieldset style="margin-top: 20px; background: #fff;">
+        <legend>Reporte Generado</legend>
+        <textarea id="resultado" readonly placeholder="El reporte estructurado aparecerá aquí al presionar el botón..."></textarea>
+        <div class="action-buttons">
+            <button type="button" class="btn-copy" onclick="copiarReporte()">Copiar al Portapapeles</button>
+            <button type="button" class="btn-email" onclick="enviarCorreo()">Enviar por Correo</button>
+        </div>
+    </fieldset>
 </div>
 
 <script>
-    // Lista de equipos predeterminados
-    const listaEquipos = [
+    // Lista de equipos de tu empresa
+    const equipos = [
         "Apilador",
         "Cargador de Barcos",
-        "RE Sur (Reclamadores)",
-        "RE Norte (Reclamadores)",
-        "BC-04 (Banda)",
-        "BC-05 (Banda)",
-        "BC-06 (Banda)",
-        "BC-07 (Banda)",
+        "RE Sur",
+        "RE Norte",
+        "BC-04",
+        "BC-05",
+        "BC-06",
+        "BC-07",
         "BANDA DE FINOS",
-        "PV-1 (Plataforma)",
-        "PV-2 (Plataforma)",
-        "PV-3 (Plataforma)",
-        "PV-4 (Plataforma)",
-        "PV-5 (Plataforma)",
-        "SF-1 (Samson Feeder)",
-        "SF-2 (Samson Feeder)",
-        "TRF",
+        "PV-1", "PV-2", "PV-3", "PV-4", "PV-5",
+        "SF-1", "SF-2", "TRF",
         "Lavadero Ecológico",
-        "Lavadero Patio 1",
-        "Lavadero Patio 2",
-        "Lavadero Patio 5"
+        "LAVADERO PATIO 1",
+        "LAVADERO PATIO 2",
+        "LAVADERO PATIO 5"
     ];
 
-    // Cargar fecha actual por defecto
-    document.getElementById('fechaTurno.value').value = new Date().toISOString().split('T')[0];
+    const contenedor = document.getElementById('listaEquipos');
 
-    // Renderizar equipos dinámicamente
-    const container = document.getElementById('equiposContainer');
-    listaEquiposforEach = listaEquipos.forEach((eq, index) => {
+    equipos.forEach((eq, index) => {
         const div = document.createElement('div');
         div.className = 'equipment-row';
         div.innerHTML = `
-            <span><strong>${eq}</strong></span>
-            <select class="eq-estado" id="estado_${index}">
-                <option value="DO">DO (Operativo)</option>
-                <option value="DNO">DNO (No Operativo)</option>
-                <option value="ND">ND (No Disponible)</option>
-            </select>
-            <input type="text" class="eq-obs" id="obs_${index}" placeholder="Observaciones (opcional)">
+            <div class="equipment-name">${index + 1}. ${eq}</div>
+            <div class="status-options">
+                <label><input type="radio" name="eq_${index}" value="DO" checked onclick="toggleObs(${index}, false)"> DO</label>
+                <label><input type="radio" name="eq_${index}" value="DNO" onclick="toggleObs(${index}, false)"> DNO</label>
+                <label><input type="radio" name="eq_${index}" value="ND" onclick="toggleObs(${index}, true)"> ND</label>
+            </div>
+            <input type="text" id="obs_${index}" class="obs-input" placeholder="Especifique la novedad (Obligatorio si es ND)..." style="display:none;">
         `;
-        container.appendChild(div);
+        contenedor.appendChild(div);
     });
 
+    // Poner fecha actual por defecto
+    document.getElementById('fechaTurno').valueAsDate = new Date();
+
+    function toggleObs(index, mostrar) {
+        const obsInput = document.getElementById(`obs_${index}`);
+        obsInput.style.display = mostrar ? 'block' : 'none';
+        if(!mostrar) obsInput.value = '';
+    }
+
     function generarReporte() {
-        const qEntrega = document.getElementById('quienEntrega').value || "[Sin Nombre]";
-        const cEntrega = document.getElementById('cargoEntrega').value;
-        const qRecibe = document.getElementById('quienRecibe').value || "[Sin Nombre]";
-        const cRecibe = document.getElementById('cargoRecibe').value;
-        const turno = document.getElementById('turnoHorario').value;
-        const fecha = document.getElementById('fechaTurno').value;
+        const getVal = (id) => document.getElementById(id).value;
         
-        let reporte = `ENTREGA DE TURNO\n`;
-        reporte += `Yo, ${qEntrega}, con cargo ${cEntrega}, le entrego el turno a ${qRecibe}, con cargo ${cRecibe}.\n`;
-        reporte += `Turno: ${turno}\n`;
-        reporte += `Fecha: ${fecha}\n\n`;
+        let texto = `ENTREGA DE TURNO\n`;
+        texto += `Yo, ${getVal('nombreEmisor')}, con cargo ${getVal('cargoEmisor')}, le entrego el turno a ${getVal('nombreReceptor')}, con cargo ${getVal('cargoReceptor')}.\n`;
+        texto += `Turno: ${getVal('turnoHorario')}\n`;
+        texto += `Fecha: ${getVal('fechaTurno')}\n\n`;
         
-        reporte += `--- ESTADO DE LOS EQUIPOS ---\n`;
-        listaEquipos.forEach((eq, index) => {
-            const estado = document.getElementById(`estado_${index}`).value;
+        texto += `Estado de los equipos:\n`;
+        equipos.forEach((eq, index) => {
+            const radios = document.getElementsByName(`eq_${index}`);
+            let estadoSeleccionado = 'DO';
+            for (const r of radios) {
+                if (r.checked) estadoSeleccionado = r.value;
+            }
             const obs = document.getElementById(`obs_${index}`).value;
-            reporte += `• ${eq} -> Estado: [${estado}] ${obs ? '| Obs: ' + obs : ''}\n`;
+            
+            texto += `- ${eq}: Estado: ${estadoSeleccionado}`;
+            if(obs) {
+                texto += ` (${obs})`;
+            }
+            texto += `\n`;
         });
 
-        reporte += `\n--- OPERACIÓN ---\n`;
-        reporte += `${document.getElementById('operacionActual').value || 'Sin novedades en la operación.'}\n`;
+        texto += `\n8. Otros equipos o sistemas:\nNA\n\n`;
+        texto += `9. Operación:\n${getVal('operacionActual') || 'Sin novedades en la operación.'}\n\n`;
+        texto += `10. Actividades relevantes:\n${getVal('actividadesRelevantes') || 'Ninguna registrada.'}\n\n`;
+        texto += `11. Áreas intervenidas: Se entregan ordenadas y aseadas (si/no): ${getVal('areasAseadas')}\n\n`;
+        texto += `12. Equipos entregados:\n`;
+        texto += `- Celular, Estado: ${getVal('celularEstado')}\n`;
+        texto += `- Radio, Estado: ${getVal('radioEstado')}`;
 
-        reporte += `\n--- ACTIVIDADES RELEVANTES ---\n`;
-        reporte += `${document.getElementById('actividadesRelevantes').value || 'Ninguna.'}\n`;
-
-        reporte += `\nÁreas intervenidas ordenadas y aseadas: ${document.getElementById('aseoAreas').value}\n`;
-        
-        const dotaciones = document.querySelectorAll('.dotacion');
-        reporte += `Equipos entregados -> Celular: [${dotaciones[0].value}] | Radio: [${dotaciones[1].value}]\n`;
-
-        const box = document.getElementById('resultado-preview');
-        box.style.display = 'block';
-        box.innerText = reporte;
-
-        document.getElementById('btnCopiar').style.display = 'inline-block';
-        document.getElementById('btnDescargar').style.display = 'inline-block';
-        
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        document.getElementById('resultado').value = texto;
     }
 
     function copiarReporte() {
-        const texto = document.getElementById('resultado-preview').innerText;
-        navigator.clipboard.writeText(texto).then(() => {
-            alert('¡Reporte copiado al portapapeles! Ya puedes pegarlo en WhatsApp, Correo o Teams.');
-        });
+        const resultado = document.getElementById('resultado');
+        if(!resultado.value) {
+            alert('Primero debes generar el reporte.');
+            return;
+        }
+        resultado.select();
+        navigator.clipboard.writeText(resultado.value);
+        alert('¡Reporte copiado al portapapeles! Ya puedes pegarlo en WhatsApp o correo.');
     }
 
-    function descargarTxt() {
-        const texto = document.getElementById('resultado-preview').innerText;
-        const fecha = document.getElementById('fechaTurno').value || 'turno';
-        const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
-        const enlace = document.createElement('a');
-        enlace.href = URL.createObjectURL(blob);
-        enlace.download = `Reporte_Turno_${fecha}.txt`;
-        enlace.click();
+    function enviarCorreo() {
+        const resultado = document.getElementById('resultado').value;
+        if(!resultado) {
+            alert('Primero debes generar el reporte.');
+            return;
+        }
+        const asunto = encodeURIComponent(`Entrega de Turno - ${document.getElementById('fechaTurno').value}`);
+        const cuerpo = encodeURIComponent(resultado);
+        window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
     }
 </script>
 
