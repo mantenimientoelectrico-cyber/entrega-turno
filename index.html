@@ -51,7 +51,7 @@
             font-weight: 500;
             font-size: 14px;
         }
-        input[type="text"], input[type="date"], input[type="time"], select, textarea {
+        input[type="text"], input[type="date"], select, textarea {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -136,19 +136,24 @@
         <!-- Datos Generales -->
         <fieldset>
             <legend>Información General</legend>
-            <label>Nombre del Emisor:</label>
-            <input type="text" id="nombreEmisor" required placeholder="Ej. Juan Pérez">
             
-            <label>Cargo del Emisor:</label>
-            <input type="text" id="cargoEmisor" required placeholder="Ej. Operador de Patio">
+            <label>Emisor del Turno:</label>
+            <select id="selectEmisor" onchange="actualizarCargo('Emisor')" required>
+                <option value="">-- Seleccione su nombre --</option>
+            </select>
+            <input type="hidden" id="nombreEmisor">
+            <input type="hidden" id="cargoEmisor">
+            <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Cargo asignado: <strong id="txtCargoEmisor">---</strong></p>
             
-            <label>Nombre del Receptor:</label>
-            <input type="text" id="nombreReceptor" required placeholder="Ej. Carlos Gómez">
+            <label style="margin-top: 15px;">Receptor del Turno:</label>
+            <select id="selectReceptor" onchange="actualizarCargo('Receptor')" required>
+                <option value="">-- Seleccione quien recibe --</option>
+            </select>
+            <input type="hidden" id="nombreReceptor">
+            <input type="hidden" id="cargoReceptor">
+            <p style="font-size: 12px; color: #64748b; margin-top: 4px;">Cargo asignado: <strong id="txtCargoReceptor">---</strong></p>
             
-            <label>Cargo del Receptor:</label>
-            <input type="text" id="cargoReceptor" required placeholder="Ej. Operador Entrante">
-            
-            <div style="display: flex; gap: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
                 <div style="flex: 1;">
                     <label>Turno:</label>
                     <input type="text" id="turnoHorario" required placeholder="Ej. 06:00 – 14:00">
@@ -163,11 +168,7 @@
         <!-- Estado de Equipos -->
         <fieldset>
             <legend>Estado de los Equipos</legend>
-            
-            <!-- Generador dinámico simplificado de equipos -->
-            <div id="listaEquipos">
-                <!-- Se inyectan mediante JS para ahorrar código -->
-            </div>
+            <div id="listaEquipos"></div>
         </fieldset>
 
         <!-- Operación y Actividades -->
@@ -212,27 +213,64 @@
 </div>
 
 <script>
-    // Lista de equipos de tu empresa
+    // ==========================================
+    // CONFIGURACIÓN DE PERSONAL (Modifica aquí)
+    // ==========================================
+    const personal = [
+        { nombre: "Michael Martinez", cargo: "Supervisor de mantenimiento" },
+        { nombre: "Roger Martinez", cargo: "Supervisor de de mantenimiento" },
+        { nombre: "Juan M Polo", cargo: "Técnico de Mantenimiento" },
+        { nombre: "Edwin Almanza", cargo: "Técnico de Mantenimiento" },
+        { nombre: "Luis Pertuz", cargo: "Técnico de Mantenimiento" }
+    ];
+
+    // Cargar listas desplegables al iniciar
+    window.onload = function() {
+        const selectEmisor = document.getElementById('selectEmisor');
+        const selectReceptor = document.getElementById('selectReceptor');
+
+        personal.forEach((p, index) => {
+            let opt1 = document.createElement('option');
+            opt1.value = index;
+            opt1.textContent = p.nombre;
+            selectEmisor.appendChild(opt1);
+
+            let opt2 = document.createElement('option');
+            opt2.value = index;
+            opt2.textContent = p.nombre;
+            selectReceptor.appendChild(opt2);
+        });
+
+        document.getElementById('fechaTurno').valueAsDate = new Date();
+    };
+
+    function actualizarCargo(tipo) {
+        const select = document.getElementById(`select${tipo}`);
+        const index = select.value;
+        
+        if(index === "") {
+            document.getElementById(`nombre${tipo}`).value = "";
+            document.getElementById(`cargo${tipo}`).value = "";
+            document.getElementById(`txtCargo${tipo}`).textContent = "---";
+            return;
+        }
+
+        const seleccionado = personal[index];
+        document.getElementById(`nombre${tipo}`).value = seleccionado.nombre;
+        document.getElementById(`cargo${tipo}`).value = seleccionado.cargo;
+        document.getElementById(`txtCargo${tipo}`).textContent = seleccionado.cargo;
+    }
+
+    // Lista de equipos
     const equipos = [
-        "Apilador",
-        "Cargador de Barcos",
-        "RE Sur",
-        "RE Norte",
-        "BC-04",
-        "BC-05",
-        "BC-06",
-        "BC-07",
-        "BANDA DE FINOS",
+        "Apilador", "Cargador de Barcos", "RE Sur", "RE Norte",
+        "BC-04", "BC-05", "BC-06", "BC-07", "BANDA DE FINOS",
         "PV-1", "PV-2", "PV-3", "PV-4", "PV-5",
         "SF-1", "SF-2", "TRF",
-        "Lavadero Ecológico",
-        "LAVADERO PATIO 1",
-        "LAVADERO PATIO 2",
-        "LAVADERO PATIO 5"
+        "Lavadero Ecológico", "LAVADERO PATIO 1", "LAVADERO PATIO 2", "LAVADERO PATIO 5"
     ];
 
     const contenedor = document.getElementById('listaEquipos');
-
     equipos.forEach((eq, index) => {
         const div = document.createElement('div');
         div.className = 'equipment-row';
@@ -243,13 +281,10 @@
                 <label><input type="radio" name="eq_${index}" value="DNO" onclick="toggleObs(${index}, false)"> DNO</label>
                 <label><input type="radio" name="eq_${index}" value="ND" onclick="toggleObs(${index}, true)"> ND</label>
             </div>
-            <input type="text" id="obs_${index}" class="obs-input" placeholder="Especifique la novedad (Obligatorio si es ND)..." style="display:none;">
+            <input type="text" id="obs_${index}" class="obs-input" placeholder="Especifique la novedad..." style="display:none;">
         `;
         contenedor.appendChild(div);
     });
-
-    // Poner fecha actual por defecto
-    document.getElementById('fechaTurno').valueAsDate = new Date();
 
     function toggleObs(index, mostrar) {
         const obsInput = document.getElementById(`obs_${index}`);
@@ -260,6 +295,11 @@
     function generarReporte() {
         const getVal = (id) => document.getElementById(id).value;
         
+        if(!getVal('nombreEmisor') || !getVal('nombreReceptor')) {
+            alert('Por favor selecciona tanto el emisor como el receptor del turno.');
+            return;
+        }
+
         let texto = `ENTREGA DE TURNO\n`;
         texto += `Yo, ${getVal('nombreEmisor')}, con cargo ${getVal('cargoEmisor')}, le entrego el turno a ${getVal('nombreReceptor')}, con cargo ${getVal('cargoReceptor')}.\n`;
         texto += `Turno: ${getVal('turnoHorario')}\n`;
@@ -300,7 +340,7 @@
         }
         resultado.select();
         navigator.clipboard.writeText(resultado.value);
-        alert('¡Reporte copiado al portapapeles! Ya puedes pegarlo en WhatsApp o correo.');
+        alert('¡Reporte copiado al portapapeles!');
     }
 
     function enviarCorreo() {
