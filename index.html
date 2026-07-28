@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Dinámico de Entrega de Turno</title>
+    <style>
+        :root {
+            --primary-color: #0f172a;
+            --accent-color: #2563eb;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        fieldset {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+
+        legend {
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 0 10px;
+            font-size: 1.1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 2fr;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            background-color: #f8fafc;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background-color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .equipment-row {
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 3fr;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        button.secondary {
+            background-color: #64748b;
+        }
+        button.secondary:hover {
+            background-color: #475569;
+        }
+
+        #resultado-preview {
+            background: #0f172a;
+            color: #38bdf8;
+            padding: 20px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 Sistema Automatizado de Entrega de Turno</h1>
+    
+    <form id="turnoForm">
+        <!-- DATOS GENERALES -->
+        <fieldset>
+            <legend>1. Información General</legend>
+            <div class="grid-2">
+                <div>
+                    <label>Entrega:</label>
+                    <input type="text" id="quienEntrega" placeholder="Tu Nombre">
+                </div>
+                <div>
+                    <label>Cargo (Quien entrega):</label>
+                    <select id="cargoEntrega">
+                        <option value="Tecnólogo de Automatización">Tecnólogo de Automatización</option>
+                        <option value="Ingeniero de Automatización">Ingeniero de Automatización</option>
+                        <option value="Operador Especializado">Operador Especializado</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Recibe:</label>
+                    <input type="text" id="quienRecibe" placeholder="Nombre de quien recibe">
+                </div>
+                <div>
+                    <label>Cargo (Quien recibe):</label>
+                    <select id="cargoRecibe">
+                        <option value="Tecnólogo de Automatización">Tecnólogo de Automatización</option>
+                        <option value="Ingeniero de Automatización">Ingeniero de Automatización</option>
+                        <option value="Operador Especializado">Operador Especializado</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Turno:</label>
+                    <select id="turnoHorario">
+                        <option value="06:00 – 14:00">06:00 – 14:00 (Mañana)</option>
+                        <option value="14:00 – 22:00">14:00 – 22:00 (Tarde)</option>
+                        <option value="22:00 – 06:00">22:00 – 06:00 (Noche)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Fecha:</label>
+                    <input type="date" id="fechaTurno">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ESTADO DE EQUIPOS -->
+        <fieldset>
+            <legend>2. Estado de los Equipos</legend>
+            <div id="equiposContainer">
+                <!-- Se generan dinámicamente o por bloques claros -->
+            </div>
+        </fieldset>
+
+        <!-- OPERACIÓN Y ACTIVIDADES -->
+        <fieldset>
+            <legend>3. Operación y Novedades</legend>
+            <label>Descripción de la Operación Actual:</label>
+            <textarea id="operacionActual" placeholder="Describa la operación al momento de la entrega..."></textarea>
+            
+            <label style="margin-top: 15px;">Actividades relevantes, trabajos pendientes y fallas:</label>
+            <textarea id="actividadesRelevantes" placeholder="1. Se revisó... 2. Pendiente..."></textarea>
+            
+            <div class="grid-2" style="margin-top: 15px;">
+                <div>
+                    <label>Áreas intervenidas ordenadas y aseadas:</label>
+                    <select id="aseoAreas">
+                        <option value="SI">SI</option>
+                        <option value="NO">NO</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- DOTACIÓN -->
+        <fieldset>
+            <legend>4. Equipos Entregados (Dotación)</legend>
+            <div class="grid-2">
+                <div>
+                    <label>Celular Estado:</label>
+                    <select class="dotacion">
+                        <option value="DO">Disponible y Operativo (DO)</option>
+                        <option value="DNO">Disponible y No Operativo (DNO)</option>
+                        <option value="ND">No Disponible (ND)</option>
+                        <option value="BUENO">Bueno</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Radio Estado:</label>
+                    <select class="dotacion">
+                        <option value="DO">Disponible y Operativo (DO)</option>
+                        <option value="DNO">Disponible y No Operativo (DNO)</option>
+                        <option value="ND">No Disponible (ND)</option>
+                        <option value="BUENO">Bueno</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="btn-container">
+            <button type="button" onclick="generarReporte()">✨ Generar Reporte de Turno</button>
+            <button type="button" class="secondary" onclick="copiarReporte()" id="btnCopiar" style="display:none;">📋 Copiar al Portapapeles</button>
+            <button type="button" class="secondary" onclick="descargarTxt()" id="btnDescargar" style="display:none;">💾 Descargar Archivo .txt</button>
+        </div>
+    </form>
+
+    <div id="resultado-preview"></div>
+</div>
+
+<script>
+    // Lista de equipos predeterminados
+    const listaEquipos = [
+        "Apilador",
+        "Cargador de Barcos",
+        "RE Sur (Reclamadores)",
+        "RE Norte (Reclamadores)",
+        "BC-04 (Banda)",
+        "BC-05 (Banda)",
+        "BC-06 (Banda)",
+        "BC-07 (Banda)",
+        "BANDA DE FINOS",
+        "PV-1 (Plataforma)",
+        "PV-2 (Plataforma)",
+        "PV-3 (Plataforma)",
+        "PV-4 (Plataforma)",
+        "PV-5 (Plataforma)",
+        "SF-1 (Samson Feeder)",
+        "SF-2 (Samson Feeder)",
+        "TRF",
+        "Lavadero Ecológico",
+        "Lavadero Patio 1",
+        "Lavadero Patio 2",
+        "Lavadero Patio 5"
+    ];
+
+    // Cargar fecha actual por defecto
+    document.getElementById('fechaTurno.value').value = new Date().toISOString().split('T')[0];
+
+    // Renderizar equipos dinámicamente
+    const container = document.getElementById('equiposContainer');
+    listaEquiposforEach = listaEquipos.forEach((eq, index) => {
+        const div = document.createElement('div');
+        div.className = 'equipment-row';
+        div.innerHTML = `
+            <span><strong>${eq}</strong></span>
+            <select class="eq-estado" id="estado_${index}">
+                <option value="DO">DO (Operativo)</option>
+                <option value="DNO">DNO (No Operativo)</option>
+                <option value="ND">ND (No Disponible)</option>
+            </select>
+            <input type="text" class="eq-obs" id="obs_${index}" placeholder="Observaciones (opcional)">
+        `;
+        container.appendChild(div);
+    });
+
+    function generarReporte() {
+        const qEntrega = document.getElementById('quienEntrega').value || "[Sin Nombre]";
+        const cEntrega = document.getElementById('cargoEntrega').value;
+        const qRecibe = document.getElementById('quienRecibe').value || "[Sin Nombre]";
+        const cRecibe = document.getElementById('cargoRecibe').value;
+        const turno = document.getElementById('turnoHorario').value;
+        const fecha = document.getElementById('fechaTurno').value;
+        
+        let reporte = `ENTREGA DE TURNO\n`;
+        reporte += `Yo, ${qEntrega}, con cargo ${cEntrega}, le entrego el turno a ${qRecibe}, con cargo ${cRecibe}.\n`;
+        reporte += `Turno: ${turno}\n`;
+        reporte += `Fecha: ${fecha}\n\n`;
+        
+        reporte += `--- ESTADO DE LOS EQUIPOS ---\n`;
+        listaEquipos.forEach((eq, index) => {
+            const estado = document.getElementById(`estado_${index}`).value;
+            const obs = document.getElementById(`obs_${index}`).value;
+            reporte += `• ${eq} -> Estado: [${estado}] ${obs ? '| Obs: ' + obs : ''}\n`;
+        });
+
+        reporte += `\n--- OPERACIÓN ---\n`;
+        reporte += `${document.getElementById('operacionActual').value || 'Sin novedades en la operación.'}\n`;
+
+        reporte += `\n--- ACTIVIDADES RELEVANTES ---\n`;
+        reporte += `${document.getElementById('actividadesRelevantes').value || 'Ninguna.'}\n`;
+
+        reporte += `\nÁreas intervenidas ordenadas y aseadas: ${document.getElementById('aseoAreas').value}\n`;
+        
+        const dotaciones = document.querySelectorAll('.dotacion');
+        reporte += `Equipos entregados -> Celular: [${dotaciones[0].value}] | Radio: [${dotaciones[1].value}]\n`;
+
+        const box = document.getElementById('resultado-preview');
+        box.style.display = 'block';
+        box.innerText = reporte;
+
+        document.getElementById('btnCopiar').style.display = 'inline-block';
+        document.getElementById('btnDescargar').style.display = 'inline-block';
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function copiarReporte() {
+        const texto = document.getElementById('resultado-preview').innerText;
+        navigator.clipboard.writeText(texto).then(() => {
+            alert('¡Reporte copiado al portapapeles! Ya puedes pegarlo en WhatsApp, Correo o Teams.');
+        });
+    }
+
+    function descargarTxt() {
+        const texto = document.getElementById('resultado-preview').innerText;
+        const fecha = document.getElementById('fechaTurno').value || 'turno';
+        const blob = new Blob([texto], { type: 'text/plain;charset=utf-8' });
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(blob);
+        enlace.download = `Reporte_Turno_${fecha}.txt`;
+        enlace.click();
+    }
+</script>
+
+</body>
+</html>
